@@ -1,5 +1,35 @@
 -- D Carroll Game Design Document --
    -- Created 23 January 2019 --
 
-"2.5 Dimensional" Physics based platformer
-Examples : Trine, Assassin's Creed Chronicles India
+Physics based Action Platforming game. Gameplay similar to "Risk of Rain" by Hopoo games and
+"Trine" by Frozenbyte games.
+Science fiction setting.
+
+#Core Gameplay#
+
+The core gameplay of the game is that of a 2.5D action platformer. The player will traverse platforms, fight
+enemies and solve physics puzzles to navigate the environment and collect money. They will be able to use
+this money to purchase upgrades at shop stations. Upgrades would include things like Damage Upgrades, Health
+Upgrades, etc.
+
+#Combat#
+
+Combat in the game consists of the simplistic directional shooting seen in platform games like Risk of Rain
+mentioned above. An older game with this style of combat would be Contra. The player shoots to the left 
+or right, and must line up their character vertically for the bullet fired to be considered a hit. The
+player can also pick up small objects, for example a small explosive barrell, and throw it at enemies.
+
+#Enemies#
+
+The AI of the enemies will be limited. The two enemies I currently have planned are an Alien and an
+automatic turret.
+
+#The Drone#
+
+The player character is followed by a small, flying robotic Drone. The player can control the Drone.
+The drone can fly up to areas the player cannot reach, and can be told to hover where it is, allowing
+the player to use it as a mobile platform. The drone can be upgraded to have a weapon.
+
+#Platforming#
+The player will have to climb ladders, make jumps, push boxes and use their drone to surpass a series
+of obstacles.

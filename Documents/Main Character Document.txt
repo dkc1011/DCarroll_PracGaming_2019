@@ -3,13 +3,13 @@
 
 1 : Movement
 
-	1.1 : 	<Move Right> - The player presses [D] and the main character will move directly right, or turn to face right and then move if they are facing left.
+	1.1 : 	<Move Right> - The player presses [Left Arrow] and the main character will move directly right, or turn to face right and then move if they are facing left.
 		The speed at which they move is dependent on whether they are crouching or standing.
-	1.2 : 	<Move Left> - The player presses [A] and the main character will move directly left, or turn to face left and then move if they are facing right.
+	1.2 : 	<Move Left> - The player presses [Right Arrow] and the main character will move directly left, or turn to face left and then move if they are facing right.
 		The speed at which they move is dependent on whether they are crouching or standing.
-	1.3 : 	<Move Out> - The player presses [S] and the main character will move toward the camera.
+	1.3 : 	<Move Out> - The player presses [Down Arrow] and the main character will move toward the camera.
 		The speed at which they move is dependent on whether they are crouching or standing.
-	1.4 : 	<Move In> - The player presses [W] and the main character will move away from the camera.
+	1.4 : 	<Move In> - The player presses [Up Arrow] and the main character will move away from the camera.
 		The speed at which they move is dependent on whether they are crouching or standing.
 	1.5 : 	<Jump> - The player presses [Space] and an upward force will be applied to the player. Crouch will be toggled OFF after a jump.
 	1.6 : 	<Toggle Crouch> - The player presses [Ctrl] and crouch is toggled ON or OFF.
@@ -17,16 +17,35 @@
 2 : Combat
 	
 	2.1 :	<Attack> - The player presses [Z] and the character will Attack / Shoot a projectile in the direction they are facing (Left or Right)
-	2.2 :	<Special abilities / Upgrade Attacks> - The [X], [C], [V] keys are reserved for special abilities or upgrade attacks to be decided.
+	2.2 :	<Roll> - The player presses [C] causing the character to action roll in the direction the player is facing. This gives the player a few
+		moments of invincibility to dodge incoming damage.
+	2.3 :	<Special abilities / Upgrade Attacks> - The [X] and [V] keys are reserved for special abilities or upgrade attacks to be decided.
 
 3 : Interactions
 
-	3.1 : 	<Interact> - The player presses [E] to interact with objects in the environment. 
+	3.1 : 	<Interact> - The player presses [A] to interact with objects in the environment. 
 	3.2 : 	<Push> - The player can push boxes and other large physics items easily by walking into them.
-	3.3 : 	<Pull> - The player presses [E] to interact with pushable objects in the environment to Pull objects with them.
-	3.4 : 	<Open> - The player presses [E] to interact with Highlighted doors and boxes in the environment to open them.
-	3.5 : 	<Close> - The player presses [E] to interact with Highlighted doors in the environment to close them.
+	3.3 : 	<Pull> - The player presses [S] to interact with pushable objects in the environment to Pull objects with them.
+	3.4 : 	<Open> - The player presses [A] to interact with Highlighted doors and boxes in the environment to open them.
+	3.5 : 	<Close> - The player presses [A] to interact with Highlighted doors in the environment to close them.
 	3.6 : 	<Climb ladder> - When the player <Moves In> against a ladder object, they will ascend the ladder.
-	3.7 : 	<Pick up> - The player can pick up and carry highlighted small physics items by pressing [E]. While they carrying, they cannot :
+	3.7 : 	<Pick up> - The player can pick up and carry highlighted small physics items by pressing [A]. While they carrying, they cannot :
 		<Interact>, <Pull>, <Open>, <Close>, <Climb ladder>. They can only carry one item at a time and thus cannot <Pick Up> either.
-	3.8 :	<Throw> - The player can press [E] again while holding an item to throw it. A variable of force will be applied to the object.
+	3.8 :	<Throw> - The player can press [A] again while holding an item to throw it. A variable of force will be applied to the object.
+
+4 : The Drone
+	
+	4.1 : 	<Switch to Drone> - The player presses [D] to switch to the robot drone that follows them.
+	4.2 :	<Switch to Player> - The player presses [D] again to switch back to the player.
+	4.3 :	<Move Drone Right> - The player presses [Right Arrow] to move the drone right.
+	4.4 :	<Move Drone Left> - The player presses [Left Arrow] to move the drone left.
+	4.5 :	<Move Drone In>	- The player presses [Up Arrow] to move the drone away from the camera.
+	4.6 :	<Move Drone Out> - The player presses [Down Arrow] to move the drone towards the camera.
+	4.7 :	<Ascend> - The player presses [Space] to make the drone go up vertically.
+	4.8 :	<Descend> - The player presses [Ctrl] tp make the drone go down vertically.
+	4.9 : 	<Shoot (Upgrade)> - The player presses [Z] to make the drone shoot a projectile in the
+		direction it faces.
+	4.10:	<Hold Position>	- The player presses [X] and the drone will hold its position when the
+		the player Switches back to controlling the character.
+	4.11:	<Return to Player> - The player presses [X] again while the drone is selected and the
+		Drone will return to following the player.
