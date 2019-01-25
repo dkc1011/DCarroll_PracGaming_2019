@@ -9,8 +9,7 @@ Science fiction setting.
 
 The core gameplay of the game is that of a 2.5D action platformer. The player will traverse platforms, fight
 enemies and solve physics puzzles to navigate the environment and collect money. They will be able to use
-this money to purchase upgrades at shop stations. Upgrades would include things like Damage Upgrades, Health
-Upgrades, etc.
+this money to purchase upgrades at shop stations.
 
 #Combat#
 
@@ -32,4 +31,14 @@ the player to use it as a mobile platform. The drone can be upgraded to have a w
 
 #Platforming#
 The player will have to climb ladders, make jumps, push boxes and use their drone to surpass a series
-of obstacles.
+of obstacles and reach the end of the level.
+
+#Upgrades#
+The player will collect money by exploring the environment and killing enemy. This money can be spent in
+shop stations to buy upgrades.
+
+	Planned Upgrades:
+	Weapon damage increase
+	Maximum health increase
+	Drone weapon
+	Drone speed increase
