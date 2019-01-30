@@ -7,7 +7,7 @@ public class PlayerControl : MonoBehaviour
     /// <summary>
     /// The players movement speed
     /// </summary>
-    private int playerSpeed;
+    private float playerSpeed;
     /// <summary>
     /// the player is currently active or inactive
     /// </summary>
@@ -33,46 +33,206 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     private int maximumHealth;
 
+    private char facing;
+
+    public static Vector3 playerPosition;
+
     // Use this for initialization
     void Start () {
-		
+
+        active = true;
+        playerSpeed = 2.8f;
+        facing = 'r';
+
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		
+
+        playerPosition = transform.position;
+
+		if(isActive())
+        {
+            if(ShouldMoveRight())
+            {
+                Move(playerSpeed);
+            }
+            else if(ShouldMoveLeft())
+            {
+                Move(playerSpeed);
+            }
+            else if(ShouldMoveIn())
+            {
+                Move(playerSpeed);
+            }
+            else if(ShouldMoveOut())
+            {
+                Move(playerSpeed);
+            }
+
+
+            if (Input.GetKeyDown("c"))
+            {
+                ToggleCrouch();
+            }
+        }
 	}
 
     /// <summary>
     /// Player moves right relative to the camera at a given speed
     /// </summary>
-    private void MoveRight(int playerSpeed)
+    private void Move(float playerSpeed)
     {
-        throw new System.NotImplementedException();
+        transform.position += playerSpeed * transform.forward * Time.deltaTime;
+    }
+
+    private bool ShouldMoveRight()
+    {
+        if(Input.GetKey("right"))
+        {
+            if(facing != 'r')
+            {
+                if(facing == 'u')
+                {
+                    transform.Rotate(Vector3.up, 90);
+                    facing = 'r';
+                }
+                else if(facing == 'd')
+                {
+                    transform.Rotate(Vector3.up, 270);
+                    facing = 'r';
+                }
+                else if(facing == 'l')
+                {
+                    transform.Rotate(Vector3.up, 180);
+                    facing = 'r';
+                }
+            }
+            else
+            {
+                facing = 'r';
+            }
+
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     /// <summary>
     /// Player moves left relative to the camera at a given speed
     /// </summary>
-    private void MoveLeft(int playerSpeed)
+    private bool ShouldMoveLeft()
     {
-        throw new System.NotImplementedException();
+        if (Input.GetKey("left"))
+        {
+            if (facing != 'l')
+            {
+                if (facing == 'u')
+                {
+                    transform.Rotate(Vector3.up, 270);
+                    facing = 'l';
+                }
+                else if (facing == 'd')
+                {
+                    transform.Rotate(Vector3.up, 90);
+                    facing = 'l';
+                }
+                else if (facing == 'r')
+                {
+                    transform.Rotate(Vector3.up, 180);
+                    facing = 'l';
+                }
+            }
+            else
+            {
+                facing = 'l';
+            }
+
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     /// <summary>
     /// Player moves away from the camera at a given speed
     /// </summary>
-    private void MoveIn(int playerSpeed)
+    private bool ShouldMoveIn()
     {
-        throw new System.NotImplementedException();
+        if (Input.GetKey("up"))
+        {
+            if (facing != 'u')
+            {
+                if (facing == 'r')
+                {
+                    transform.Rotate(Vector3.up, -90);
+                    facing = 'u';
+                }
+                else if (facing == 'd')
+                {
+                    transform.Rotate(Vector3.up, 180);
+                    facing = 'u';
+                }
+                else if (facing == 'l')
+                {
+                    transform.Rotate(Vector3.up, 90);
+                    facing = 'u';
+                }
+            }
+            else
+            {
+                facing = 'u';
+            }
+
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     /// <summary>
     /// Player moves toward the camera at a given speed
     /// </summary>
-    private void MoveOut(int playerSpeed)
+    private bool ShouldMoveOut()
     {
-        throw new System.NotImplementedException();
+        if (Input.GetKey("down"))
+        {
+            if (facing != 'd')
+            {
+                if (facing == 'r')
+                {
+                    transform.Rotate(Vector3.up, 90);
+                    facing = 'd';
+                }
+                else if (facing == 'u')
+                {
+                    transform.Rotate(Vector3.up, 180);
+                    facing = 'd';
+                }
+                else if (facing == 'l')
+                {
+                    transform.Rotate(Vector3.up, -90);
+                    facing = 'd';
+                }
+            }
+            else
+            {
+                facing = 'd';
+            }
+
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     /// <summary>
@@ -80,7 +240,16 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     private void ToggleCrouch()
     {
-        throw new System.NotImplementedException();
+        if (crouched)
+        {
+            crouched = false;
+            playerSpeed = 2.8f;
+        }
+        else
+        {
+            crouched = true;
+            playerSpeed = 1.4f;
+        }
     }
 
     private void Shoot()
@@ -107,9 +276,16 @@ public class PlayerControl : MonoBehaviour
     /// <summary>
     /// Method checks if the player or drone is currently active
     /// </summary>
-    private void isActive()
+    private bool isActive()
     {
-        throw new System.NotImplementedException();
+        if(active == true)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     /// <summary>
@@ -158,5 +334,10 @@ public class PlayerControl : MonoBehaviour
     private void ClimbLadder()
     {
         throw new System.NotImplementedException();
+    }
+
+    public Vector3 GetPlayerPosition(Vector3 playerPosition)
+    {
+        return playerPosition;
     }
 }

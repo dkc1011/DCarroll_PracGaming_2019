@@ -1,0 +1,50 @@
+Drone Document
+    #Drone Keybinds#
+        
+    1.1 :	<Switch to Player> - The player presses [D] to switch back to the player.
+
+			*Method* -	toggleDrone()
+
+	1.2 :	<Move Drone Right> - The player presses [Right Arrow] to move the drone right.
+
+			*Method* -	moveRight()
+
+	1.3 :	<Move Drone Left> - The player presses [Left Arrow] to move the drone left.
+
+			*Method* -	moveLeft()
+
+	1.4 :	<Move Drone In>	- The player presses [Up Arrow] to move the drone away from the camera.
+
+			*Method* -	moveIn()
+
+	1.5 :	<Move Drone Out> - The player presses [Down Arrow] to move the drone towards the camera.
+
+			*Method* -	moveOut()
+
+	1.6 :	<Ascend> - The player presses [Space] to make the drone go up vertically.
+
+			*Method* -	ascend()
+
+	1.7 :	<Descend> - The player presses [Ctrl] tp make the drone go down vertically.
+
+			*Method* -	descend()
+
+	1.8 : 	<Shoot (Upgrade)> - The player presses [Z] to make the drone shoot a projectile in the
+		direction it faces.
+
+			*Method* - 	shoot()
+
+	1.9 :	<Hold Position>	- The player presses [X] and the drone will hold its position when the
+		the player Switches back to controlling the character.
+
+			*Method* -	toggleHoldPosition()
+
+	1.10:	<Return to Player> - The player presses [X] again while the drone is selected and the
+		Drone will return to following the player.
+
+			*Method* -	toggleHoldPosition()
+	
+	1.12:	<Drone follow player> - If drone is not holding position, it should idly follow the player,
+		always moving towards the player position.
+			
+			*Method* - 	DroneFollowsPlayer()
