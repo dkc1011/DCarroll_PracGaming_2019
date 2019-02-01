@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PlayerControl : MonoBehaviour
 {
+    CameraControl ourCamera;
+    DroneControl myDrone;
     /// <summary>
     /// The players movement speed
     /// </summary>
@@ -35,13 +37,13 @@ public class PlayerControl : MonoBehaviour
 
     private char facing;
 
-    public static Vector3 playerPosition;
+
 
     // Use this for initialization
     void Start () {
-
+        ourCamera = Camera.main.GetComponent<CameraControl>();
         active = true;
-        playerSpeed = 2.8f;
+        playerSpeed = 2.4f;
         facing = 'r';
 
 	}
@@ -49,33 +51,58 @@ public class PlayerControl : MonoBehaviour
 	// Update is called once per frame
 	void Update () {
 
-        playerPosition = transform.position;
-
-		if(isActive())
+        //Checks if the player character is currently active
+        if (IsPlayerActive())
         {
-            if(ShouldMoveRight())
-            {
-                Move(playerSpeed);
-            }
-            else if(ShouldMoveLeft())
-            {
-                Move(playerSpeed);
-            }
-            else if(ShouldMoveIn())
-            {
-                Move(playerSpeed);
-            }
-            else if(ShouldMoveOut())
+
+            //Various Movement Triggers
+            if (ShouldMoveRight())
             {
                 Move(playerSpeed);
             }
 
+            if (ShouldMoveLeft())
+            {
+                Move(playerSpeed);
+            }
 
+            if (ShouldMoveIn())
+            {
+                if (transform.position.x >= -2.5)
+                    Move(playerSpeed);
+            }
+
+            if (ShouldMoveOut())
+            {
+                if(transform.position.x <= 2.5)
+                    Move(playerSpeed);
+            }
+
+            //Toggle Crouching Trigger
             if (Input.GetKeyDown("c"))
             {
                 ToggleCrouch();
             }
+
+            //Shooting Trigger
+            if (Input.GetKeyDown("z"))
+            {
+                Shoot();
+            }
+
+
+
         }
+
+        //ToggleActive trigger
+        if (Input.GetKeyDown("d"))
+        {
+            ToggleActive();
+        }
+
+        ourCamera.playerPositionIs(transform.position);
+        //myDrone.getPlayerPosition(transform.position);
+
 	}
 
     /// <summary>
@@ -254,7 +281,16 @@ public class PlayerControl : MonoBehaviour
 
     private void Shoot()
     {
-        throw new System.NotImplementedException();
+        Vector3 fwd = transform.TransformDirection(Vector3.forward);
+
+        if (Physics.Raycast(transform.position, fwd, 10))
+        {
+            print("Hit with Bullet");
+        }
+        else
+        {
+            print("No hit");
+        }
     }
 
     /// <summary>
@@ -268,7 +304,7 @@ public class PlayerControl : MonoBehaviour
     /// <summary>
     /// Method checks if the player is currently carrying something
     /// </summary>
-    private bool isCarrying()
+    private bool IsCarrying()
     {
         throw new System.NotImplementedException();
     }
@@ -276,7 +312,7 @@ public class PlayerControl : MonoBehaviour
     /// <summary>
     /// Method checks if the player or drone is currently active
     /// </summary>
-    private bool isActive()
+    internal bool IsPlayerActive()
     {
         if(active == true)
         {
@@ -301,31 +337,15 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     internal void ToggleActive()
     {
-        throw new System.NotImplementedException();
-    }
-
-    /// <summary>
-    /// checks if the player is facing the same direction they are moving or not
-    /// </summary>
-    private bool ShouldTurn()
-    {
-        throw new System.NotImplementedException();
-    }
-
-    /// <summary>
-    /// alters the player's facing direction to left
-    /// </summary>
-    private void TurnLeft()
-    {
-        throw new System.NotImplementedException();
-    }
-
-    /// <summary>
-    /// alters the player's facing direction to face right
-    /// </summary>
-    private void TurnRight()
-    {
-        throw new System.NotImplementedException();
+        if(active == true)
+        {
+            active = false;
+        }
+        else
+        {
+            active = true;
+            print("Player active");
+        }
     }
 
     /// <summary>
@@ -334,10 +354,5 @@ public class PlayerControl : MonoBehaviour
     private void ClimbLadder()
     {
         throw new System.NotImplementedException();
-    }
-
-    public Vector3 GetPlayerPosition(Vector3 playerPosition)
-    {
-        return playerPosition;
     }
 }
