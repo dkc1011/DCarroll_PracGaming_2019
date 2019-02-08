@@ -42,6 +42,7 @@ public class PlayerControl : MonoBehaviour
     // Use this for initialization
     void Start () {
         ourCamera = Camera.main.GetComponent<CameraControl>();
+        myDrone = GameObject.FindWithTag("Drone").GetComponent<DroneControl>();
         active = true;
         playerSpeed = 2.4f;
         facing = 'r';
@@ -101,7 +102,6 @@ public class PlayerControl : MonoBehaviour
         }
 
         ourCamera.playerPositionIs(transform.position);
-        //myDrone.getPlayerPosition(transform.position);
 
 	}
 
@@ -340,6 +340,7 @@ public class PlayerControl : MonoBehaviour
         if(active == true)
         {
             active = false;
+            print("Drone active");
         }
         else
         {

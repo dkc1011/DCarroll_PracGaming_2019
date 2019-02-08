@@ -7,38 +7,247 @@ public class DroneControl : MonoBehaviour {
     PlayerControl myPlayer;
     CameraControl droneCamera;
     Vector3 playerPosition;
+    private float droneSpeed;
+    private char facing = 'r';
+    Vector3 targetPosition;
+    private Quaternion targetOrientation;
 
-	// Use this for initialization
-	void Start () {
-		
-	}
+    // Use this for initialization
+    void Start () {
+        myPlayer = GameObject.FindWithTag("Player").GetComponent<PlayerControl>();
+        droneSpeed = 3.4f;
+        droneCamera = Camera.main.GetComponent<CameraControl>();
+    }
 	
 	// Update is called once per frame
 	void Update () {
-	   /* if(IsDroneActive())
+        if (myPlayer.IsPlayerActive())
         {
 
+            targetOrientation = myPlayer.transform.rotation;
+
+            if (facing == 'r')
+            {
+                targetPosition = new Vector3(myPlayer.transform.position.x, myPlayer.transform.position.y + 1, myPlayer.transform.position.z - 1);
+            }
+            else if (facing == 'l')
+            {
+                targetPosition = new Vector3(myPlayer.transform.position.x, myPlayer.transform.position.y + 1, myPlayer.transform.position.z + 1);
+            }
+            else if (facing == 'd')
+            {
+                targetPosition = new Vector3(myPlayer.transform.position.x - 1, myPlayer.transform.position.y + 1, myPlayer.transform.position.z + 1);
+            }
+            else
+            {
+                targetPosition = new Vector3(myPlayer.transform.position.x + 1, myPlayer.transform.position.y + 1, myPlayer.transform.position.z - 1);
+            }
+
+            transform.position = Vector3.Lerp(transform.position, targetPosition, 0.025f);
+         
+            //transform.rotation = Quaternion.Slerp(transform.rotation, targetOrientation, 0.5f);
         }
         else
         {
-            transform.position = new Vector3(playerPosition.x, playerPosition.y + 2, playerPosition.z);
-        } */
+            droneCamera.dronePositionIs(transform.position);
+
+            //Various Movement Triggers
+            if (ShouldMoveRight())
+            {
+                Move(droneSpeed);
+            }
+
+            if (ShouldMoveLeft())
+            {
+                Move(droneSpeed);
+            }
+
+            if (ShouldMoveIn())
+            {
+                if (transform.position.x >= -2.5)
+                    Move(droneSpeed);
+            }
+
+            if (ShouldMoveOut())
+            {
+                if (transform.position.x <= 2.5)
+                    Move(droneSpeed);
+            }
+
+            if (Input.GetKey("space"))
+            {
+                Ascend(droneSpeed);
+            }
+
+            if (Input.GetKey("c"))
+            {
+                Descend(droneSpeed);
+            }
+        }
+            
 	}
 
-    private bool IsDroneActive()
+    private void Move(float droneSpeed)
     {
-        if(myPlayer.IsPlayerActive())
+        transform.position += droneSpeed * transform.forward * Time.deltaTime;
+    }
+
+    private void Ascend(float droneSpeed)
+    {
+        transform.position += droneSpeed * transform.up * Time.deltaTime;
+    }
+
+    private void Descend(float droneSpeed)
+    {
+        transform.position -= droneSpeed * transform.up * Time.deltaTime;
+    }
+
+    private bool ShouldMoveRight()
+    {
+        if (Input.GetKey("right"))
+        {
+            if (facing != 'r')
+            {
+                if (facing == 'u')
+                {
+                    transform.Rotate(Vector3.up, 90);
+                    facing = 'r';
+                }
+                else if (facing == 'd')
+                {
+                    transform.Rotate(Vector3.up, 270);
+                    facing = 'r';
+                }
+                else if (facing == 'l')
+                {
+                    transform.Rotate(Vector3.up, 180);
+                    facing = 'r';
+                }
+            }
+            else
+            {
+                facing = 'r';
+            }
+
+            return true;
+        }
+        else
         {
             return false;
         }
+    }
+
+    /// <summary>
+    /// Player moves left relative to the camera at a given speed
+    /// </summary>
+    private bool ShouldMoveLeft()
+    {
+        if (Input.GetKey("left"))
+        {
+            if (facing != 'l')
+            {
+                if (facing == 'u')
+                {
+                    transform.Rotate(Vector3.up, 270);
+                    facing = 'l';
+                }
+                else if (facing == 'd')
+                {
+                    transform.Rotate(Vector3.up, 90);
+                    facing = 'l';
+                }
+                else if (facing == 'r')
+                {
+                    transform.Rotate(Vector3.up, 180);
+                    facing = 'l';
+                }
+            }
+            else
+            {
+                facing = 'l';
+            }
+
+            return true;
+        }
         else
         {
-            return true;
+            return false;
         }
     }
 
-    /*internal void getPlayerPosition(Vector3 position)
+    /// <summary>
+    /// Player moves away from the camera at a given speed
+    /// </summary>
+    private bool ShouldMoveIn()
     {
-        playerPosition = position;
-    }*/
+        if (Input.GetKey("up"))
+        {
+            if (facing != 'u')
+            {
+                if (facing == 'r')
+                {
+                    transform.Rotate(Vector3.up, -90);
+                    facing = 'u';
+                }
+                else if (facing == 'd')
+                {
+                    transform.Rotate(Vector3.up, 180);
+                    facing = 'u';
+                }
+                else if (facing == 'l')
+                {
+                    transform.Rotate(Vector3.up, 90);
+                    facing = 'u';
+                }
+            }
+            else
+            {
+                facing = 'u';
+            }
+
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Player moves toward the camera at a given speed
+    /// </summary>
+    private bool ShouldMoveOut()
+    {
+        if (Input.GetKey("down"))
+        {
+            if (facing != 'd')
+            {
+                if (facing == 'r')
+                {
+                    transform.Rotate(Vector3.up, 90);
+                    facing = 'd';
+                }
+                else if (facing == 'u')
+                {
+                    transform.Rotate(Vector3.up, 180);
+                    facing = 'd';
+                }
+                else if (facing == 'l')
+                {
+                    transform.Rotate(Vector3.up, -90);
+                    facing = 'd';
+                }
+            }
+            else
+            {
+                facing = 'd';
+            }
+
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 }

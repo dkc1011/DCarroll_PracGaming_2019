@@ -25,7 +25,7 @@ Drone Document
 
 			*Method* -	ascend()
 
-	1.7 :	<Descend> - The player presses [Ctrl] tp make the drone go down vertically.
+	1.7 :	<Descend> - The player presses [Ctrl] to make the drone go down vertically.
 
 			*Method* -	descend()
 
