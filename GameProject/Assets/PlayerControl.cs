@@ -37,7 +37,11 @@ public class PlayerControl : MonoBehaviour
 
     private char facing;
 
+    private Vector3 direction, velocity, acceleration, gravity;
 
+    private bool isGrounded = true, Airbourne = false;
+
+    private float jumpForce = 9f;
 
     // Use this for initialization
     void Start () {
@@ -48,9 +52,16 @@ public class PlayerControl : MonoBehaviour
         facing = 'r';
 
 	}
-	
-	// Update is called once per frame
-	void Update () {
+
+    private void Awake()
+    {
+        velocity = new Vector3(0, 7, 0);
+        acceleration = new Vector3(0, -9, 0);
+        gravity = new Vector3(0, -10f, 0);
+    }
+
+    // Update is called once per frame
+    void Update () {
 
         //Checks if the player character is currently active
         if (IsPlayerActive())
@@ -103,7 +114,38 @@ public class PlayerControl : MonoBehaviour
 
         ourCamera.playerPositionIs(transform.position);
 
-	}
+        //Jumping
+
+        if (Airbourne)
+        {
+            velocity += gravity * Time.deltaTime;
+            transform.position += velocity * Time.deltaTime;
+
+            Vector3 dwn = Vector3.down;
+            Debug.DrawRay(transform.position, dwn * 0.001f, Color.white, 1);
+            RaycastHit info;
+            if (Physics.Raycast(transform.position, dwn * 0.001f, out info, 1))
+            {
+                isGrounded = true;
+                transform.position = info.point + 1f * Vector3.up;
+            }
+            else
+                isGrounded = false;
+
+        }
+        if (isGrounded && Airbourne)
+        {
+            velocity = Vector3.zero;
+            Airbourne = false;
+
+        }
+
+
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            Jump();
+        }
+    }
 
     /// <summary>
     /// Player moves right relative to the camera at a given speed
@@ -112,6 +154,24 @@ public class PlayerControl : MonoBehaviour
     {
         transform.position += playerSpeed * transform.forward * Time.deltaTime;
     }
+
+    private bool CanJump()
+    {
+        return !Airbourne;
+    }
+    private void Jump()
+    {
+
+        if (CanJump())
+        {
+            //Up ward code stuff
+            Airbourne = true;
+            isGrounded = false;
+            velocity += Vector3.up * jumpForce;
+        }
+
+    }
+
 
     private bool ShouldMoveRight()
     {

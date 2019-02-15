@@ -6,6 +6,7 @@ using UnityEngine;
 public class CameraControl : MonoBehaviour {
     float heightOfCamera = 3;
     float Xpos = 9;
+    Vector3 targetPosition;
     Vector3 playerPosition;
     Vector3 dronePosition;
     PlayerControl myPlayer;
@@ -15,6 +16,7 @@ public class CameraControl : MonoBehaviour {
     void Start () {
         myPlayer = GameObject.FindWithTag("Player").GetComponent<PlayerControl>();
         myDrone = GameObject.FindWithTag("Drone").GetComponent<DroneControl>();
+        transform.position = new Vector3(Xpos, myPlayer.transform.position.y + heightOfCamera, myPlayer.transform.position.z);
     }
 	
 	// Update is called once per frame
@@ -27,16 +29,18 @@ public class CameraControl : MonoBehaviour {
         {
             followDrone(dronePosition);
         }
-	}
+
+        transform.position = Vector3.Lerp(transform.position, targetPosition, 0.1f);
+    }
 
     internal void followPlayer(Vector3 position)
     {
-        transform.position = new Vector3(Xpos, position.y + heightOfCamera, position.z);
+        targetPosition = new Vector3(Xpos, myPlayer.transform.position.y + heightOfCamera, myPlayer.transform.position.z);
     }
 
     internal void followDrone(Vector3 position)
     {
-        transform.position = new Vector3(Xpos, position.y + heightOfCamera, position.z);
+        targetPosition = new Vector3(Xpos, myDrone.transform.position.y, myDrone.transform.position.z);
     }
 
     internal void playerPositionIs(Vector3 position)
