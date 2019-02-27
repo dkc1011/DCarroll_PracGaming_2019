@@ -25,7 +25,7 @@ public class PlayerControl : MonoBehaviour
     /// <summary>
     /// the player is or is not carrying an object
     /// </summary>
-    private int carrying;
+    private bool carrying;
     /// <summary>
     /// The amount of money the player  has, cannot be less than 0, there is no maximum amount
     /// </summary>
@@ -35,7 +35,7 @@ public class PlayerControl : MonoBehaviour
     /// </summary>
     private int maximumHealth;
 
-    private char facing;
+    internal char facing;
 
     private Vector3 direction, velocity, acceleration, gravity;
 
@@ -57,7 +57,7 @@ public class PlayerControl : MonoBehaviour
     {
         velocity = new Vector3(0, 7, 0);
         acceleration = new Vector3(0, -9, 0);
-        gravity = new Vector3(0, -10f, 0);
+        gravity = new Vector3(0, -15f, 0);
     }
 
     // Update is called once per frame
@@ -102,19 +102,12 @@ public class PlayerControl : MonoBehaviour
                 Shoot();
             }
 
-
-
-        }
-
-        //ToggleActive trigger
-        if (Input.GetKeyDown("d"))
-        {
-            ToggleActive();
-        }
-
-        ourCamera.playerPositionIs(transform.position);
-
-        //Jumping
+            //Jumping
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                Jump();
+            }
+        } //End is Active
 
         if (Airbourne)
         {
@@ -141,10 +134,17 @@ public class PlayerControl : MonoBehaviour
         }
 
 
-        if(Input.GetKeyDown(KeyCode.Space))
+        //ToggleActive trigger
+        if (Input.GetKeyDown("d"))
         {
-            Jump();
+            ToggleActive();
         }
+
+        ourCamera.playerPositionIs(transform.position);
+
+        
+
+        
     }
 
     /// <summary>
@@ -364,9 +364,28 @@ public class PlayerControl : MonoBehaviour
     /// <summary>
     /// Method checks if the player is currently carrying something
     /// </summary>
-    private bool IsCarrying()
+    internal bool IsCarrying()
     {
-        throw new System.NotImplementedException();
+        if(carrying)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    internal void toggleCarry()
+    {
+        if(carrying)
+        {
+            carrying = false;
+        }
+        else
+        {
+            carrying = true;
+        }
     }
 
     /// <summary>
@@ -415,5 +434,15 @@ public class PlayerControl : MonoBehaviour
     private void ClimbLadder()
     {
         throw new System.NotImplementedException();
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.gameObject.CompareTag("Money"))
+        {
+            other.gameObject.SetActive(false);
+            money++;
+            print("Money: " + money);
+        }
     }
 }

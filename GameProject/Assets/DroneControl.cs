@@ -11,6 +11,7 @@ public class DroneControl : MonoBehaviour {
     private char facing = 'r';
     Vector3 targetPosition;
     private Quaternion targetOrientation;
+    private bool holdingPosition;
 
     // Use this for initialization
     void Start () {
@@ -23,29 +24,32 @@ public class DroneControl : MonoBehaviour {
 	void Update () {
         if (myPlayer.IsPlayerActive())
         {
+            if(!IsHoldingPosition())
+            {
+                targetOrientation = myPlayer.transform.rotation;
 
-            targetOrientation = myPlayer.transform.rotation;
+                if (myPlayer.facing == 'r')
+                {
+                    targetPosition = new Vector3(myPlayer.transform.position.x, myPlayer.transform.position.y + 1, myPlayer.transform.position.z - 1.5f);
+                }
+                else if (myPlayer.facing == 'l')
+                {
+                    targetPosition = new Vector3(myPlayer.transform.position.x, myPlayer.transform.position.y + 1, myPlayer.transform.position.z + 1.5f);
+                }
+                else if (myPlayer.facing == 'd')
+                {
+                    targetPosition = new Vector3(myPlayer.transform.position.x - 1, myPlayer.transform.position.y + 1, myPlayer.transform.position.z + 1.5f);
+                }
+                else
+                {
+                    targetPosition = new Vector3(myPlayer.transform.position.x + 1, myPlayer.transform.position.y + 1, myPlayer.transform.position.z - 1.5f);
+                }
 
-            if (facing == 'r')
-            {
-                targetPosition = new Vector3(myPlayer.transform.position.x, myPlayer.transform.position.y + 1, myPlayer.transform.position.z - 1);
-            }
-            else if (facing == 'l')
-            {
-                targetPosition = new Vector3(myPlayer.transform.position.x, myPlayer.transform.position.y + 1, myPlayer.transform.position.z + 1);
-            }
-            else if (facing == 'd')
-            {
-                targetPosition = new Vector3(myPlayer.transform.position.x - 1, myPlayer.transform.position.y + 1, myPlayer.transform.position.z + 1);
-            }
-            else
-            {
-                targetPosition = new Vector3(myPlayer.transform.position.x + 1, myPlayer.transform.position.y + 1, myPlayer.transform.position.z - 1);
+                transform.position = Vector3.Lerp(transform.position, targetPosition, 0.025f);
+
+                //transform.rotation = Quaternion.Slerp(transform.rotation, targetOrientation, 0.5f);
             }
 
-            transform.position = Vector3.Lerp(transform.position, targetPosition, 0.025f);
-         
-            //transform.rotation = Quaternion.Slerp(transform.rotation, targetOrientation, 0.5f);
         }
         else
         {
@@ -82,6 +86,10 @@ public class DroneControl : MonoBehaviour {
             if (Input.GetKey("c"))
             {
                 Descend(droneSpeed);
+            }
+            if (Input.GetKeyDown("x"))
+            {
+                toggleHoldPosition();
             }
         }
             
@@ -248,6 +256,32 @@ public class DroneControl : MonoBehaviour {
         else
         {
             return false;
+        }
+    }
+
+    internal bool IsHoldingPosition()
+    {
+        if(holdingPosition == true)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private void toggleHoldPosition()
+    {
+        if(holdingPosition == true)
+        {
+            holdingPosition = false;
+            print("Drone follows player");
+        }
+        else
+        {
+            holdingPosition = true;
+            print("Drone holds position");
         }
     }
 }
