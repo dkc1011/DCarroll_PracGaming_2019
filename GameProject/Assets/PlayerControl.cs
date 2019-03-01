@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class PlayerControl : MonoBehaviour
 {
+    //------------------------------------------------------------------//
+    //                          PlayerControl.cs                        //
+    //             Player Movement, Actions and Controlls               //
+    //                                                                  //
+    //------------------------------------------------------------------//
+
     CameraControl ourCamera;
     DroneControl myDrone;
     /// <summary>
@@ -37,7 +43,7 @@ public class PlayerControl : MonoBehaviour
 
     internal char facing;
 
-    private Vector3 direction, velocity, acceleration, gravity;
+    private Vector3 velocity, acceleration, gravity;
 
     private bool isGrounded = true, Airbourne = false;
 
@@ -51,17 +57,26 @@ public class PlayerControl : MonoBehaviour
         playerSpeed = 2.4f;
         facing = 'r';
 
-	}
+        //Start player on ground
+        Vector3 dwn = Vector3.down;
+        Debug.DrawRay(transform.position, dwn * 0.01f, Color.white, 1);
+        RaycastHit info;
+        if (Physics.Raycast(transform.position, dwn * 0.001f, out info, 1))
+        {
+            isGrounded = true;
+            transform.position = info.point + 0.5f * Vector3.up;
+        }
+    }
 
     private void Awake()
     {
         velocity = new Vector3(0, 7, 0);
         acceleration = new Vector3(0, -9, 0);
-        gravity = new Vector3(0, -15f, 0);
+        gravity = new Vector3(0, -14f, 0);
     }
 
     // Update is called once per frame
-    void Update () {
+    void Update() {
 
         //Checks if the player character is currently active
         if (IsPlayerActive())
@@ -80,13 +95,13 @@ public class PlayerControl : MonoBehaviour
 
             if (ShouldMoveIn())
             {
-                if (transform.position.x >= -2.5)
+                if (transform.position.x >= -3.5f)
                     Move(playerSpeed);
             }
 
             if (ShouldMoveOut())
             {
-                if(transform.position.x <= 2.5)
+                if (transform.position.x <= 2.5f)
                     Move(playerSpeed);
             }
 
@@ -109,43 +124,45 @@ public class PlayerControl : MonoBehaviour
             }
         } //End is Active
 
+   
         if (Airbourne)
         {
             velocity += gravity * Time.deltaTime;
             transform.position += velocity * Time.deltaTime;
-
-            Vector3 dwn = Vector3.down;
-            Debug.DrawRay(transform.position, dwn * 0.001f, Color.white, 1);
-            RaycastHit info;
-            if (Physics.Raycast(transform.position, dwn * 0.001f, out info, 1))
+            if (velocity.y < 0)
             {
-                isGrounded = true;
-                transform.position = info.point + 1f * Vector3.up;
+                Vector3 dwn = Vector3.down;
+                Debug.DrawRay(transform.position, dwn * 0.01f, Color.white, 1);
+                RaycastHit info;
+                if (Physics.Raycast(transform.position, dwn * 0.001f, out info, 1))
+                {
+                    isGrounded = true;
+                    transform.position = info.point + 0.5f * Vector3.up;
+                }
+                else
+                {
+                    isGrounded = false;
+                }
             }
-            else
-                isGrounded = false;
+        }//End if(Airbourne)
 
-        }
+
         if (isGrounded && Airbourne)
         {
             velocity = Vector3.zero;
             Airbourne = false;
-
         }
 
-
         //ToggleActive trigger
+
         if (Input.GetKeyDown("d"))
         {
             ToggleActive();
-        }
+        }//End Keybind
 
-        ourCamera.playerPositionIs(transform.position);
+        ourCamera.PlayerPositionIs(transform.position);
 
-        
-
-        
-    }
+    }//End Update
 
     /// <summary>
     /// Player moves right relative to the camera at a given speed
@@ -153,25 +170,25 @@ public class PlayerControl : MonoBehaviour
     private void Move(float playerSpeed)
     {
         transform.position += playerSpeed * transform.forward * Time.deltaTime;
-    }
+    }//End Move()
 
     private bool CanJump()
     {
         return !Airbourne;
-    }
+    }//End CanJump()
+
     private void Jump()
     {
 
         if (CanJump())
         {
-            //Up ward code stuff
+            //Upward code
             Airbourne = true;
             isGrounded = false;
             velocity += Vector3.up * jumpForce;
         }
 
-    }
-
+    }//End Jump()
 
     private bool ShouldMoveRight()
     {
@@ -198,15 +215,15 @@ public class PlayerControl : MonoBehaviour
             else
             {
                 facing = 'r';
-            }
+            }//End If/Else
 
             return true;
         }
         else
         {
             return false;
-        }
-    }
+        }//End If/Else
+    }//End ShouldMoveRight()
 
     /// <summary>
     /// Player moves left relative to the camera at a given speed
@@ -236,15 +253,15 @@ public class PlayerControl : MonoBehaviour
             else
             {
                 facing = 'l';
-            }
+            }//End If/Else
 
             return true;
         }
         else
         {
             return false;
-        }
-    }
+        }//End If/Else
+    }//End ShouldMoveLeft
 
     /// <summary>
     /// Player moves away from the camera at a given speed
@@ -274,15 +291,15 @@ public class PlayerControl : MonoBehaviour
             else
             {
                 facing = 'u';
-            }
+            }//End If/Else
 
             return true;
         }
         else
         {
             return false;
-        }
-    }
+        }//End If/Else
+    }//End ShouldMoveIn()
 
     /// <summary>
     /// Player moves toward the camera at a given speed
@@ -319,8 +336,8 @@ public class PlayerControl : MonoBehaviour
         else
         {
             return false;
-        }
-    }
+        }//End If/Else
+    }//End ShouldMoveOut()
 
     /// <summary>
     /// Player is toggled into or out of crouch mode
@@ -337,7 +354,7 @@ public class PlayerControl : MonoBehaviour
             crouched = true;
             playerSpeed = 1.4f;
         }
-    }
+    }//End ToggleCrouch()
 
     private void Shoot()
     {
@@ -351,7 +368,7 @@ public class PlayerControl : MonoBehaviour
         {
             print("No hit");
         }
-    }
+    }//End Shoot()
 
     /// <summary>
     /// The player indicates that they would like to interact with an object. If there is an object, it checks what kind of object.
@@ -359,7 +376,7 @@ public class PlayerControl : MonoBehaviour
     private void Interact()
     {
         throw new System.NotImplementedException();
-    }
+    }//End Interact()
 
     /// <summary>
     /// Method checks if the player is currently carrying something
@@ -374,9 +391,9 @@ public class PlayerControl : MonoBehaviour
         {
             return false;
         }
-    }
+    }//End IsCarrying()
 
-    internal void toggleCarry()
+    internal void ToggleCarry()
     {
         if(carrying)
         {
@@ -386,7 +403,7 @@ public class PlayerControl : MonoBehaviour
         {
             carrying = true;
         }
-    }
+    }//End ToggleCarry()
 
     /// <summary>
     /// Method checks if the player or drone is currently active
@@ -401,7 +418,7 @@ public class PlayerControl : MonoBehaviour
         {
             return false;
         }
-    }
+    }//End IsPlayerActive()
 
     /// <summary>
     /// Player throws the object it is carrying, if it is not carrying an object nothing is thrown
@@ -409,7 +426,7 @@ public class PlayerControl : MonoBehaviour
     private void Throw()
     {
         throw new System.NotImplementedException();
-    }
+    }//End Throw()
 
     /// <summary>
     /// The player becomes inactive, the drone becomes active, if the player is inactive it becomes active and the drone becomes inactive
@@ -426,7 +443,7 @@ public class PlayerControl : MonoBehaviour
             active = true;
             print("Player active");
         }
-    }
+    }//End ToggleActive()
 
     /// <summary>
     /// allows the player to ascend or descend regardless of gravity as long as they are on a ladder.
@@ -434,15 +451,36 @@ public class PlayerControl : MonoBehaviour
     private void ClimbLadder()
     {
         throw new System.NotImplementedException();
-    }
+    }//End ClimbLadder()
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject.CompareTag("Money"))
+
+    }//End OnTriggerEnter()
+
+    internal void SetMoney(int m)
+    {
+        money = m;
+    }
+
+    internal int GetMoney()
+    {
+        return money;
+    }
+
+    internal void SetHealth(int h)
+    {
+        health = h;
+        if(health >= 100)
         {
-            other.gameObject.SetActive(false);
-            money++;
-            print("Money: " + money);
+            health = 100;
         }
     }
+
+    internal int GetHealth()
+    {
+        return health;
+    }
+
+
 }

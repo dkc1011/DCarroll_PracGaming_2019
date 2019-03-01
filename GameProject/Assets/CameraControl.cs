@@ -23,33 +23,33 @@ public class CameraControl : MonoBehaviour {
 	void Update () {
         if(myPlayer.IsPlayerActive())
         {
-            followPlayer(playerPosition);
+            FollowPlayer(playerPosition);
         }
         else
         {
-            followDrone(dronePosition);
+            FollowDrone(dronePosition);
         }
 
         transform.position = Vector3.Lerp(transform.position, targetPosition, 0.1f);
     }
 
-    internal void followPlayer(Vector3 position)
+    internal void FollowPlayer(Vector3 position)
     {
         targetPosition = new Vector3(Xpos, myPlayer.transform.position.y + heightOfCamera, myPlayer.transform.position.z);
     }
 
-    internal void followDrone(Vector3 position)
+    internal void FollowDrone(Vector3 position)
     {
         targetPosition = new Vector3(Xpos, myDrone.transform.position.y, myDrone.transform.position.z);
     }
 
-    internal void playerPositionIs(Vector3 position)
+    internal void PlayerPositionIs(Vector3 position)
     {
         //transform.position = new Vector3(Xpos, position.y + heightOfCamera, position.z);
         playerPosition = position;
     }
 
-    internal void dronePositionIs(Vector3 position)
+    internal void DronePositionIs(Vector3 position)
     {
         dronePosition = position;
     }

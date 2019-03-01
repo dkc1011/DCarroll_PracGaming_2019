@@ -53,7 +53,7 @@ public class DroneControl : MonoBehaviour {
         }
         else
         {
-            droneCamera.dronePositionIs(transform.position);
+            droneCamera.DronePositionIs(transform.position);
 
             //Various Movement Triggers
             if (ShouldMoveRight())
@@ -89,7 +89,7 @@ public class DroneControl : MonoBehaviour {
             }
             if (Input.GetKeyDown("x"))
             {
-                toggleHoldPosition();
+                ToggleHoldPosition();
             }
         }
             
@@ -271,7 +271,7 @@ public class DroneControl : MonoBehaviour {
         }
     }
 
-    private void toggleHoldPosition()
+    private void ToggleHoldPosition()
     {
         if(holdingPosition == true)
         {
