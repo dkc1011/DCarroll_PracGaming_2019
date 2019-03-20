@@ -3,6 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class DroneControl : MonoBehaviour {
+    //------------------------------------------------------------------//
+    //                          DroneControl.cs                         //
+    //             Drone Movement, Actions and Controlls                //
+    //                                                                  //
+    //------------------------------------------------------------------//
+
 
     PlayerControl myPlayer;
     CameraControl droneCamera;

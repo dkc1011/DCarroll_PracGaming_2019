@@ -127,7 +127,7 @@ public class PlayerControl : MonoBehaviour
    
         if (Airbourne)
         {
-            velocity += gravity * Time.deltaTime;
+            velocity += gravity* Time.deltaTime;
             transform.position += velocity * Time.deltaTime;
             if (velocity.y < 0)
             {
@@ -482,5 +482,9 @@ public class PlayerControl : MonoBehaviour
         return health;
     }
 
+    internal char IAmFacing()
+    {
+        return facing;
+    }
 
 }

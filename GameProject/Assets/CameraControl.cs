@@ -4,6 +4,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class CameraControl : MonoBehaviour {
+    //------------------------------------------------------------------//
+    //                          CameraControl.cs                        //
+    //             Camera Movement, Actions and Controlls               //
+    //                                                                  //
+    //------------------------------------------------------------------//
+
     float heightOfCamera = 3;
     float Xpos = 9;
     Vector3 targetPosition;

@@ -7,8 +7,10 @@ public class CarryObjectControl : MonoBehaviour {
     Vector3 playerPosition;
     bool playerInRange;
     bool carried;
-	// Use this for initialization
-	void Start () {
+    private Vector3 velocity, acceleration, gravity;
+
+    // Use this for initialization
+    void Start () {
         myPlayer = GameObject.FindWithTag("Player").GetComponent<PlayerControl>();
         carried = false;
 
@@ -29,10 +31,18 @@ public class CarryObjectControl : MonoBehaviour {
             }
         }
 
-
         if (carried == true)
         {
             transform.position = new Vector3(playerPosition.x, playerPosition.y + 1, playerPosition.z);
+
+            if (myPlayer.IsPlayerActive())
+            {
+                if (Input.GetKeyDown("a"))
+                {
+                    thrown();
+                }
+            }
+
         }
 
     }
@@ -47,5 +57,12 @@ public class CarryObjectControl : MonoBehaviour {
         {
             playerInRange = false;
         }
+    }
+
+   private void thrown()
+    {
+        carried = false;
+        velocity += gravity * Time.deltaTime;
+        transform.position += velocity * Time.deltaTime;
     }
 }
