@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -49,6 +50,12 @@ public class PlayerControl : MonoBehaviour
 
     private float jumpForce = 9f;
 
+    private float time = 0;
+
+    private int weaponDamage;
+
+    private bool IJustHit;
+    
     // Use this for initialization
     void Start () {
         ourCamera = Camera.main.GetComponent<CameraControl>();
@@ -56,6 +63,7 @@ public class PlayerControl : MonoBehaviour
         active = true;
         playerSpeed = 2.4f;
         facing = 'r';
+        weaponDamage = 25;
 
         //Start player on ground
         Vector3 dwn = Vector3.down;
@@ -124,14 +132,37 @@ public class PlayerControl : MonoBehaviour
             }
         } //End is Active
 
-   
+        //Checks every 1/3 of a second if the player is touching the ground
+
+        RaycastHit groundcheck;
+        Vector3 dwn = Vector3.down;
+        
+        time += Time.deltaTime;
+
+        if (time >= 0.333333)
+        {
+            if (Physics.Raycast(transform.position, dwn * 0.001f, out groundcheck, 1))
+            {
+                isGrounded = true;
+                transform.position = groundcheck.point + 0.5f * Vector3.up;
+            }
+            else
+            {
+                isGrounded = false;
+                Airbourne = true;
+            }
+            time = 0;
+        }
+
+        //Checks if the player is Airbourne
+
         if (Airbourne)
         {
             velocity += gravity* Time.deltaTime;
             transform.position += velocity * Time.deltaTime;
             if (velocity.y < 0)
             {
-                Vector3 dwn = Vector3.down;
+                
                 Debug.DrawRay(transform.position, dwn * 0.01f, Color.white, 1);
                 RaycastHit info;
                 if (Physics.Raycast(transform.position, dwn * 0.001f, out info, 1))
@@ -363,11 +394,14 @@ public class PlayerControl : MonoBehaviour
         if (Physics.Raycast(transform.position, fwd, 10))
         {
             print("Hit with Bullet");
+            IJustHit = true;
         }
         else
         {
             print("No hit");
         }
+
+        IJustHit = false;
     }//End Shoot()
 
     /// <summary>
@@ -487,4 +521,21 @@ public class PlayerControl : MonoBehaviour
         return facing;
     }
 
+
+    internal bool YouWereHit()
+    {
+        if (IJustHit)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    internal int GetWeaponDamage()
+    {
+        return weaponDamage;
+    }
 }
