@@ -55,7 +55,9 @@ public class PlayerControl : MonoBehaviour
     private int weaponDamage;
 
     private bool IJustHit;
-    
+
+    Vector3 raycastLocation;
+
     // Use this for initialization
     void Start () {
         ourCamera = Camera.main.GetComponent<CameraControl>();
@@ -64,6 +66,7 @@ public class PlayerControl : MonoBehaviour
         playerSpeed = 2.4f;
         facing = 'r';
         weaponDamage = 25;
+        IJustHit = false;
 
         //Start player on ground
         Vector3 dwn = Vector3.down;
@@ -85,10 +88,12 @@ public class PlayerControl : MonoBehaviour
 
     // Update is called once per frame
     void Update() {
+       
 
         //Checks if the player character is currently active
         if (IsPlayerActive())
         {
+ 
 
             //Various Movement Triggers
             if (ShouldMoveRight())
@@ -141,17 +146,32 @@ public class PlayerControl : MonoBehaviour
 
         if (time >= 0.333333)
         {
-            if (Physics.Raycast(transform.position, dwn * 0.001f, out groundcheck, 1))
+
+            if (Physics.CheckBox(transform.position + 0.59f * Vector3.down, new Vector3(0.4f, 0.05f, 0.4f)))
+
             {
                 isGrounded = true;
-                transform.position = groundcheck.point + 0.5f * Vector3.up;
+                //  transform.position = info.point + 0.5f * Vector3.up;
             }
+
             else
             {
                 isGrounded = false;
                 Airbourne = true;
             }
-            time = 0;
+
+
+                //if (Physics.Raycast(transform.position, dwn * 0.001f, out groundcheck, 1))
+                //{
+                //    isGrounded = true;
+                //    transform.position = groundcheck.point + 0.5f * Vector3.up;
+                //}
+                //else
+                //{
+                //    isGrounded = false;
+                //    Airbourne = true;
+                //}
+                time = 0;
         }
 
         //Checks if the player is Airbourne
@@ -163,17 +183,28 @@ public class PlayerControl : MonoBehaviour
             if (velocity.y < 0)
             {
                 
-                Debug.DrawRay(transform.position, dwn * 0.01f, Color.white, 1);
+                Debug.DrawRay(transform.position, dwn * 0.001f, Color.white, 1);
                 RaycastHit info;
-                if (Physics.Raycast(transform.position, dwn * 0.001f, out info, 1))
+                if (Physics.CheckBox(transform.position + 0.59f * Vector3.down, new Vector3(0.4f, 0.05f, 0.4f)))
+
                 {
                     isGrounded = true;
-                    transform.position = info.point + 0.5f * Vector3.up;
+                   // transform.position = info.point + 0.5f * Vector3.up;
                 }
+
                 else
                 {
-                    isGrounded = false;
-                }
+                    isGrounded = false; 
+
+                }//if (Physics.Raycast(transform.position, dwn * 1, out info, 1))
+                //{
+                //    isGrounded = true;
+                //    transform.position = info.point + 0.5f * Vector3.up;
+                //}
+                //else
+                //{
+                //    isGrounded = false;
+                //}
             }
         }//End if(Airbourne)
 
@@ -521,21 +552,25 @@ public class PlayerControl : MonoBehaviour
         return facing;
     }
 
-
-    internal bool YouWereHit()
-    {
-        if (IJustHit)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
     internal int GetWeaponDamage()
     {
         return weaponDamage;
+    }
+
+    internal bool GetEnemyHit()
+    {
+        return IJustHit;
+    }
+
+    internal void SetEnemyHit(int result)
+    {
+        if (result == 1)
+        {
+            IJustHit = false;
+        }
+        else
+        {
+            IJustHit = true;
+        }
     }
 }

@@ -15,15 +15,20 @@ public class EnemyController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (myPlayer.YouWereHit())
+        if (myPlayer.GetEnemyHit())
         {
-            TakeDamage(myPlayer.GetWeaponDamage());
-            print("Enemy was hurt");
-        }
+            if(health > 0)
+            {
+                TakeDamage(myPlayer.GetWeaponDamage());
+                print("Enemy was hit!");
+            }
+            else
+            {
+                Die();
+            }
 
-        if (health <= 0)
-        {
-            Die();
+            myPlayer.SetEnemyHit(1);
+
         }
 	}
 
