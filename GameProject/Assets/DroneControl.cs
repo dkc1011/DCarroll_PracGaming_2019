@@ -28,6 +28,8 @@ public class DroneControl : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+
+
         if (myPlayer.IsPlayerActive())
         {
             if(!IsHoldingPosition())
@@ -37,23 +39,28 @@ public class DroneControl : MonoBehaviour {
                 if (myPlayer.facing == 'r')
                 {
                     targetPosition = new Vector3(myPlayer.transform.position.x, myPlayer.transform.position.y + 1, myPlayer.transform.position.z - 1.5f);
+
+                    facing = 'r';
                 }
                 else if (myPlayer.facing == 'l')
                 {
                     targetPosition = new Vector3(myPlayer.transform.position.x, myPlayer.transform.position.y + 1, myPlayer.transform.position.z + 1.5f);
+                    facing = 'l';
                 }
                 else if (myPlayer.facing == 'd')
                 {
                     targetPosition = new Vector3(myPlayer.transform.position.x - 1, myPlayer.transform.position.y + 1, myPlayer.transform.position.z + 1.5f);
+                    facing = 'd';
                 }
                 else
                 {
                     targetPosition = new Vector3(myPlayer.transform.position.x + 1, myPlayer.transform.position.y + 1, myPlayer.transform.position.z - 1.5f);
+                    facing = 'u';
                 }
 
                 transform.position = Vector3.Lerp(transform.position, targetPosition, 0.025f);
 
-                //transform.rotation = Quaternion.Slerp(transform.rotation, targetOrientation, 0.5f);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetOrientation, 0.5f);
             }
 
         }

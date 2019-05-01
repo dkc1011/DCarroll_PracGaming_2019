@@ -69,14 +69,14 @@ public class PlayerControl : MonoBehaviour
         IJustHit = false;
 
         //Start player on ground
-        Vector3 dwn = Vector3.down;
+        /*Vector3 dwn = Vector3.down;
         Debug.DrawRay(transform.position, dwn * 0.01f, Color.white, 1);
         RaycastHit info;
         if (Physics.Raycast(transform.position, dwn * 0.001f, out info, 1))
         {
             isGrounded = true;
             transform.position = info.point + 0.5f * Vector3.up;
-        }
+        }*/
     }
 
     private void Awake()
@@ -139,7 +139,6 @@ public class PlayerControl : MonoBehaviour
 
         //Checks every 1/3 of a second if the player is touching the ground
 
-        RaycastHit groundcheck;
         Vector3 dwn = Vector3.down;
         
         time += Time.deltaTime;
@@ -147,7 +146,7 @@ public class PlayerControl : MonoBehaviour
         if (time >= 0.333333)
         {
 
-            if (Physics.CheckBox(transform.position + 0.59f * Vector3.down, new Vector3(0.4f, 0.05f, 0.4f)))
+            if (Physics.CheckBox(transform.position + 0.6f * Vector3.down, new Vector3(0.4f, 0.05f, 0.4f)))
 
             {
                 isGrounded = true;
@@ -160,18 +159,7 @@ public class PlayerControl : MonoBehaviour
                 Airbourne = true;
             }
 
-
-                //if (Physics.Raycast(transform.position, dwn * 0.001f, out groundcheck, 1))
-                //{
-                //    isGrounded = true;
-                //    transform.position = groundcheck.point + 0.5f * Vector3.up;
-                //}
-                //else
-                //{
-                //    isGrounded = false;
-                //    Airbourne = true;
-                //}
-                time = 0;
+            time = 0;
         }
 
         //Checks if the player is Airbourne
@@ -182,14 +170,12 @@ public class PlayerControl : MonoBehaviour
             transform.position += velocity * Time.deltaTime;
             if (velocity.y < 0)
             {
-                
-                Debug.DrawRay(transform.position, dwn * 0.001f, Color.white, 1);
-                RaycastHit info;
+               
                 if (Physics.CheckBox(transform.position + 0.59f * Vector3.down, new Vector3(0.4f, 0.05f, 0.4f)))
 
                 {
                     isGrounded = true;
-                   // transform.position = info.point + 0.5f * Vector3.up;
+                   //transform.position = Physics.CheckBox(transform.position + 0.59f * Vector3.down, new Vector3(0. + 0.5f * Vector3.up;
                 }
 
                 else
