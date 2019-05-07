@@ -11,6 +11,7 @@ public class PlayerControl : MonoBehaviour
     //                                                                  //
     //------------------------------------------------------------------//
 
+    Animator myAnim;
     CameraControl ourCamera;
     DroneControl myDrone;
     /// <summary>
@@ -60,10 +61,11 @@ public class PlayerControl : MonoBehaviour
 
     // Use this for initialization
     void Start () {
+        myAnim = GameObject.FindWithTag("Player").GetComponent<Animator>();
         ourCamera = Camera.main.GetComponent<CameraControl>();
         myDrone = GameObject.FindWithTag("Drone").GetComponent<DroneControl>();
         active = true;
-        playerSpeed = 2.4f;
+        playerSpeed = 3.4f;
         facing = 'r';
         weaponDamage = 25;
         IJustHit = false;
@@ -98,24 +100,42 @@ public class PlayerControl : MonoBehaviour
             //Various Movement Triggers
             if (ShouldMoveRight())
             {
+                
                 Move(playerSpeed);
             }
+
 
             if (ShouldMoveLeft())
             {
+                
                 Move(playerSpeed);
             }
 
+
             if (ShouldMoveIn())
             {
+                
                 if (transform.position.x >= -3.5f)
+                {
+                    
                     Move(playerSpeed);
+                }
             }
 
             if (ShouldMoveOut())
             {
+
                 if (transform.position.x <= 2.5f)
+                {
+                    myAnim.SetBool("Moving", true);
                     Move(playerSpeed);
+ 
+                }
+            }
+
+            if(!ShouldMoveIn() && !ShouldMoveOut() && !ShouldMoveRight() && !ShouldMoveLeft())
+            {
+                myAnim.SetBool("Moving", false);
             }
 
             //Toggle Crouching Trigger
@@ -128,17 +148,19 @@ public class PlayerControl : MonoBehaviour
             if (Input.GetKeyDown("z"))
             {
                 Shoot();
+                myAnim.SetTrigger("Shoot");
             }
 
             //Jumping
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 Jump();
+                myAnim.SetTrigger("Jump");
             }
         } //End is Active
 
         //Checks every 1/3 of a second if the player is touching the ground
-
+        
         Vector3 dwn = Vector3.down;
         
         time += Time.deltaTime;
@@ -146,7 +168,7 @@ public class PlayerControl : MonoBehaviour
         if (time >= 0.333333)
         {
 
-            if (Physics.CheckBox(transform.position + 0.6f * Vector3.down, new Vector3(0.4f, 0.05f, 0.4f)))
+            if (Physics.CheckBox(transform.position + 0.2f * Vector3.down, new Vector3(0.4f, 0.05f, 0.2f)))
 
             {
                 isGrounded = true;
@@ -161,6 +183,7 @@ public class PlayerControl : MonoBehaviour
 
             time = 0;
         }
+        
 
         //Checks if the player is Airbourne
 
@@ -171,7 +194,7 @@ public class PlayerControl : MonoBehaviour
             if (velocity.y < 0)
             {
                
-                if (Physics.CheckBox(transform.position + 0.59f * Vector3.down, new Vector3(0.4f, 0.05f, 0.4f)))
+                if (Physics.CheckBox(transform.position + 0.2f * Vector3.down, new Vector3(0.4f, 0.0001f, 0.2f)))
 
                 {
                     isGrounded = true;
@@ -180,17 +203,9 @@ public class PlayerControl : MonoBehaviour
 
                 else
                 {
-                    isGrounded = false; 
-
-                }//if (Physics.Raycast(transform.position, dwn * 1, out info, 1))
-                //{
-                //    isGrounded = true;
-                //    transform.position = info.point + 0.5f * Vector3.up;
-                //}
-                //else
-                //{
-                //    isGrounded = false;
-                //}
+                    isGrounded = false;
+                    transform.position += velocity * Time.deltaTime;
+                }
             }
         }//End if(Airbourne)
 
@@ -218,6 +233,7 @@ public class PlayerControl : MonoBehaviour
     private void Move(float playerSpeed)
     {
         transform.position += playerSpeed * transform.forward * Time.deltaTime;
+        myAnim.SetBool("Moving", true);
     }//End Move()
 
     private bool CanJump()
