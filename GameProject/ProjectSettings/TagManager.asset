@@ -7,6 +7,7 @@ TagManager:
   - Drone
   - Money
   - Wall
+  - Enemy
   layers:
   - Default
   - TransparentFX

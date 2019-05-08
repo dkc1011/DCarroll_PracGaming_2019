@@ -57,14 +57,20 @@ public class PlayerControl : MonoBehaviour
 
     private bool IJustHit;
 
+    public GameObject DronePrefab;
+
+    public GameObject Drone;
+
+    private Rigidbody rb;
+
     Vector3 raycastLocation;
 
     // Use this for initialization
     void Start () {
-        //Attaches the player object to it's animator, camera and drone.
-        myAnim = GameObject.FindWithTag("Player").GetComponent<Animator>();
+        //Attaches the player object to it's animator and Camera
+        myAnim = GetComponent<Animator>();
         ourCamera = Camera.main.GetComponent<CameraControl>();
-        myDrone = GameObject.FindWithTag("Drone").GetComponent<DroneControl>();
+        rb = GetComponent<Rigidbody>();
 
         //Initializes various variables
         active = true;
@@ -72,6 +78,10 @@ public class PlayerControl : MonoBehaviour
         facing = 'r';
         weaponDamage = 25;
         IJustHit = false;
+
+        //Instantiates the Drone
+        Drone = (GameObject)Instantiate(DronePrefab, new Vector3(transform.position.x - 2, transform.position.y + 1, transform.position.z - 3), Quaternion.identity);
+        SetMyDrone(GameObject.FindWithTag("Drone").GetComponent<DroneControl>());
     }
 
     private void Awake()
@@ -104,8 +114,11 @@ public class PlayerControl : MonoBehaviour
             //Jumping
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                Jump();
-                myAnim.SetTrigger("Jump");
+                if (!crouched)
+                {
+                    Jump();
+                    myAnim.SetTrigger("Jump");
+                }
             }
         } //End is Active
 
@@ -169,6 +182,12 @@ public class PlayerControl : MonoBehaviour
             Airbourne = false;
         }
 
+        //ToggleCrouching trigger
+        if (Input.GetKeyDown("c"))
+        {
+            ToggleCrouch();
+        }
+
         //ToggleActive trigger -- When the player pressed D, the Drone becomes active
 
         if (Input.GetKeyDown("d"))
@@ -227,7 +246,7 @@ public class PlayerControl : MonoBehaviour
 
         if (ShouldMoveOut())
         {
-            if (transform.position.x <= 2.5f)
+            if (transform.position.x <= 3.5f)
             {
                 //if (!CheckWallCollision())
                 {
@@ -439,12 +458,14 @@ public class PlayerControl : MonoBehaviour
         if (crouched)
         {
             crouched = false;
-            playerSpeed = 2.8f;
+            myAnim.SetBool("Crouching", false);
+            playerSpeed = 3.9f;
         }
         else
         {
             crouched = true;
-            playerSpeed = 1.4f;
+            myAnim.SetBool("Crouching", true);
+            playerSpeed = 2.5f;
         }
     }//End ToggleCrouch()
 
@@ -453,11 +474,18 @@ public class PlayerControl : MonoBehaviour
     private void Shoot()
     {
         Vector3 fwd = transform.TransformDirection(Vector3.forward);
+        RaycastHit enemyHit;
 
-        if (Physics.Raycast(transform.position, fwd, 10))
+        if (Physics.Raycast(transform.position, fwd, out enemyHit, 10))
         {
-            print("Hit with Bullet");
-            IJustHit = true;
+            if (enemyHit.collider.tag == "Enemy")
+            {
+                print("Hit Enemy with Bullet");
+            }
+            else
+            {
+                print("Hit something else with Bullet");
+            }
         }
         else
         {
@@ -613,6 +641,16 @@ public class PlayerControl : MonoBehaviour
     internal int GetWeaponDamage()
     {
         return weaponDamage;
+    }
+
+    private void SetMyDrone(DroneControl myDrone)
+    {
+        myDrone = this.myDrone;
+    }
+
+    public DroneControl GetMyDrone()
+    {
+        return myDrone;
     }
 
 

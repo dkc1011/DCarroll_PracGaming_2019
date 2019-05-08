@@ -21,12 +21,16 @@ public class CameraControl : MonoBehaviour {
     // Use this for initialization
     void Start () {
         myPlayer = GameObject.FindWithTag("Player").GetComponent<PlayerControl>();
-        myDrone = GameObject.FindWithTag("Drone").GetComponent<DroneControl>();
+        //myDrone = GameObject.FindWithTag("Drone").GetComponent<DroneControl>();
+        //myDrone = FindObjectOfType<DroneControl>().GetComponent<DroneControl>();
+
+        if (myDrone != null) Debug.Log("Drone Found");
+
         transform.position = new Vector3(Xpos, myPlayer.transform.position.y + heightOfCamera, myPlayer.transform.position.z);
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    void Update () {
         if(myPlayer.IsPlayerActive())
         {
             FollowPlayer(playerPosition);
@@ -46,7 +50,7 @@ public class CameraControl : MonoBehaviour {
 
     internal void FollowDrone(Vector3 position)
     {
-        targetPosition = new Vector3(Xpos, myDrone.transform.position.y, myDrone.transform.position.z);
+        targetPosition = new Vector3(Xpos, dronePosition.y, dronePosition.z);
     }
 
     internal void PlayerPositionIs(Vector3 position)

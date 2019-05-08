@@ -9,24 +9,85 @@ public class EnemyController : MonoBehaviour {
     float enemySpeed;
     private Vector3 startPosition;
     private Vector3 targetPosition;
-    private enum status { Patrolling, Alerted, Engaging }
-    private status enemyStatus;
+    private enum Status { Idle, Patrolling, Alerted, Engaging }
+    private Status enemyStatus;
+    private float waitTimer;
+    private RaycastHit playerCheck;
 
-	// Use this for initialization
-	void Start () {
-        facing = 'r';
+    // Use this for initialization
+    void Start () {
+        facing = 'l';
         health = 100;
         myPlayer  = GameObject.FindWithTag("Player").GetComponent<PlayerControl>();
-        targetPosition = new Vector3(startPosition.x, startPosition.y, startPosition.z - 5);
-        enemyStatus = status.Patrolling;
+        targetPosition = new Vector3(startPosition.x+3, startPosition.y, startPosition.z - 5);
+        enemyStatus = Status.Idle;
         startPosition = transform.position;
+        waitTimer = 0;
+
+        
     }
 	
 	// Update is called once per frame
 	void Update () {
         switch(enemyStatus)
         {
-            case status.Patrolling:
+            case Status.Idle:
+                Vector3 fwd = transform.forward;
+
+                if (transform.position != startPosition)
+                {
+                    targetPosition = startPosition;
+                    enemyStatus = Status.Patrolling;
+                }
+                else
+                {
+                    waitTimer += Time.deltaTime;
+
+                    if (waitTimer >= 3 && waitTimer <= 6)
+                    {
+                        FaceOut();
+                    }
+                    else if (waitTimer > 6 && waitTimer <= 9)
+                    {
+                        FaceRight();
+                    }
+                    else if (waitTimer > 9 && waitTimer <= 12)
+                    {
+                        FaceIn();
+                    }
+                    else if (waitTimer > 12)
+                    {
+                        waitTimer = 0;
+                        FaceLeft();
+                    }                    
+
+
+                    if (Physics.Raycast(transform.position, fwd, out playerCheck, 15))
+                    {
+                        if (playerCheck.collider.tag == "Player")
+                        {
+                            Debug.Log("Player spotted");
+
+                            if (playerCheck.point.z < transform.position.z)
+                            {
+                                targetPosition = new Vector3(playerCheck.point.x, playerCheck.point.y, playerCheck.point.z + 2);
+                            }
+                            else if(playerCheck.point.z > transform.position.z)
+                            {
+                                targetPosition = new Vector3(playerCheck.point.x, playerCheck.point.y, playerCheck.point.z - 2);
+                            }
+                               
+
+                            enemyStatus = Status.Patrolling;
+
+                        }
+
+                    }
+                }
+
+                break;
+
+            case Status.Patrolling:
                 if(targetPosition.z <= transform.position.z)
                 {
                     PatrolLeft();
@@ -43,16 +104,20 @@ public class EnemyController : MonoBehaviour {
                 {
                     PatrolUp();
                 }
+                //else
+                //{
+                //    enemyStatus = Status.Idle;
+                //}
 
                 break;
 
-            case status.Alerted:
+            case Status.Alerted:
 
 
-            case status.Engaging:
+            case Status.Engaging:
 
             default:
-                enemyStatus = status.Patrolling;
+                enemyStatus = Status.Patrolling;
                 break;
         }
 	}
@@ -202,5 +267,7 @@ public class EnemyController : MonoBehaviour {
             facing = 'd';
         }
     }
+
+
 
 }

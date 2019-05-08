@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class PickUpItemControl : MonoBehaviour {
     float turningSpeed = 50.0f;
-    internal enum itemType { Health, Money }
+    internal enum ItemType { Health, Money }
     PlayerControl myPlayer;
 
     //Declares what type of item this gameObject represents.
-    internal itemType thisItemIs;
+    internal ItemType thisItemIs;
 
     int valueOf;
 
@@ -16,12 +16,12 @@ public class PickUpItemControl : MonoBehaviour {
     {
         if(this.gameObject.CompareTag("Money"))
         {
-            thisItemIs = itemType.Money;
+            thisItemIs = ItemType.Money;
             valueOf = 1;
         }
         else if(this.gameObject.CompareTag("Health"))
         {
-            thisItemIs = itemType.Health;
+            thisItemIs = ItemType.Health;
             valueOf = 25;
         }
 
@@ -31,10 +31,10 @@ public class PickUpItemControl : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-        rotateLeft();
+        RotateLeft();
     }
 
-    private void rotateLeft()
+    private void RotateLeft()
     {
         transform.Rotate(transform.up, turningSpeed * Time.deltaTime);
     }
@@ -42,14 +42,14 @@ public class PickUpItemControl : MonoBehaviour {
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            if (thisItemIs == itemType.Money)
+            if (thisItemIs == ItemType.Money)
             {
                 int newMoney = myPlayer.GetMoney() + valueOf;
                 print("Money: " + newMoney);
                 myPlayer.SetMoney(newMoney);
                 this.gameObject.SetActive(false);
             }
-            else if(thisItemIs == itemType.Health)
+            else if(thisItemIs == ItemType.Health)
             {
                 int newHealth = myPlayer.GetHealth() + valueOf;
                 print("Health: " + newHealth);
