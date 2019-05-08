@@ -51,7 +51,7 @@ public class PlayerControl : MonoBehaviour
 
     private float jumpForce = 9f;
 
-    private float time = 0;
+    private float timeGroundCheck = 0;
 
     private int weaponDamage;
 
@@ -61,24 +61,17 @@ public class PlayerControl : MonoBehaviour
 
     // Use this for initialization
     void Start () {
+        //Attaches the player object to it's animator, camera and drone.
         myAnim = GameObject.FindWithTag("Player").GetComponent<Animator>();
         ourCamera = Camera.main.GetComponent<CameraControl>();
         myDrone = GameObject.FindWithTag("Drone").GetComponent<DroneControl>();
+
+        //Initializes various variables
         active = true;
-        playerSpeed = 3.4f;
+        playerSpeed = 3.9f;
         facing = 'r';
         weaponDamage = 25;
         IJustHit = false;
-
-        //Start player on ground
-        /*Vector3 dwn = Vector3.down;
-        Debug.DrawRay(transform.position, dwn * 0.01f, Color.white, 1);
-        RaycastHit info;
-        if (Physics.Raycast(transform.position, dwn * 0.001f, out info, 1))
-        {
-            isGrounded = true;
-            transform.position = info.point + 0.5f * Vector3.up;
-        }*/
     }
 
     private void Awake()
@@ -95,61 +88,18 @@ public class PlayerControl : MonoBehaviour
         //Checks if the player character is currently active
         if (IsPlayerActive())
         {
- 
 
-            //Various Movement Triggers
-            if (ShouldMoveRight())
-            {
-                
-                Move(playerSpeed);
-            }
+            //Checks every tick if the player has pressed a movement key
+            CheckMovement();
 
-
-            if (ShouldMoveLeft())
-            {
-                
-                Move(playerSpeed);
-            }
-
-
-            if (ShouldMoveIn())
-            {
-                
-                if (transform.position.x >= -3.5f)
-                {
-                    
-                    Move(playerSpeed);
-                }
-            }
-
-            if (ShouldMoveOut())
-            {
-
-                if (transform.position.x <= 2.5f)
-                {
-                    myAnim.SetBool("Moving", true);
-                    Move(playerSpeed);
- 
-                }
-            }
-
-            if(!ShouldMoveIn() && !ShouldMoveOut() && !ShouldMoveRight() && !ShouldMoveLeft())
-            {
-                myAnim.SetBool("Moving", false);
-            }
-
-            //Toggle Crouching Trigger
-            if (Input.GetKeyDown("c"))
-            {
-                ToggleCrouch();
-            }
-
+           
             //Shooting Trigger
             if (Input.GetKeyDown("z"))
             {
                 Shoot();
                 myAnim.SetTrigger("Shoot");
             }
+
 
             //Jumping
             if (Input.GetKeyDown(KeyCode.Space))
@@ -159,16 +109,19 @@ public class PlayerControl : MonoBehaviour
             }
         } //End is Active
 
+
+        //GroundCheck and Jumping
+
         //Checks every 1/3 of a second if the player is touching the ground
         
         Vector3 dwn = Vector3.down;
         
-        time += Time.deltaTime;
+        timeGroundCheck += Time.deltaTime;
 
-        if (time >= 0.333333)
+        if (timeGroundCheck >= 0.333333)
         {
 
-            if (Physics.CheckBox(transform.position + 0.2f * Vector3.down, new Vector3(0.4f, 0.05f, 0.2f)))
+            if (Physics.CheckBox(transform.position + 0.1f * Vector3.down, new Vector3(0.4f, 0.05f, 0.2f)))
 
             {
                 isGrounded = true;
@@ -181,7 +134,7 @@ public class PlayerControl : MonoBehaviour
                 Airbourne = true;
             }
 
-            time = 0;
+            timeGroundCheck = 0;
         }
         
 
@@ -216,7 +169,7 @@ public class PlayerControl : MonoBehaviour
             Airbourne = false;
         }
 
-        //ToggleActive trigger
+        //ToggleActive trigger -- When the player pressed D, the Drone becomes active
 
         if (Input.GetKeyDown("d"))
         {
@@ -227,19 +180,84 @@ public class PlayerControl : MonoBehaviour
 
     }//End Update
 
-    /// <summary>
-    /// Player moves right relative to the camera at a given speed
-    /// </summary>
+
+    private bool CheckWallCollision()
+    {     
+         if (Physics.CheckBox(transform.position + 0.4f * Vector3.forward, new Vector3(0.5f, 0.01f, 0.3f)))
+         {
+              return true;
+         }
+         else
+         {
+              return false;
+         }       
+    }
+
+    private void CheckMovement()
+    {
+        if (ShouldMoveRight())
+        {
+            //if (!CheckWallCollision())
+            {
+                Move(playerSpeed);
+            }
+        }
+
+
+        if (ShouldMoveLeft())
+        {
+            //if (!CheckWallCollision())
+            {
+                Move(playerSpeed);
+            }
+        }
+
+
+        if (ShouldMoveIn())
+        {
+
+            if (transform.position.x >= -3.5f)
+            {
+                //if (!CheckWallCollision())
+                {
+                    Move(playerSpeed);
+                }
+            }
+        }
+
+        if (ShouldMoveOut())
+        {
+            if (transform.position.x <= 2.5f)
+            {
+                //if (!CheckWallCollision())
+                {
+                    Move(playerSpeed);
+                }
+            }
+        }
+
+        if (!ShouldMoveIn() && !ShouldMoveOut() && !ShouldMoveRight() && !ShouldMoveLeft())
+        {
+            myAnim.SetBool("Moving", false);
+        }
+    }
+
+
+
     private void Move(float playerSpeed)
     {
         transform.position += playerSpeed * transform.forward * Time.deltaTime;
         myAnim.SetBool("Moving", true);
     }//End Move()
 
+
+
     private bool CanJump()
     {
         return !Airbourne;
     }//End CanJump()
+
+
 
     private void Jump()
     {
@@ -253,6 +271,8 @@ public class PlayerControl : MonoBehaviour
         }
 
     }//End Jump()
+
+
 
     private bool ShouldMoveRight()
     {
@@ -288,6 +308,8 @@ public class PlayerControl : MonoBehaviour
             return false;
         }//End If/Else
     }//End ShouldMoveRight()
+
+
 
     /// <summary>
     /// Player moves left relative to the camera at a given speed
@@ -327,6 +349,8 @@ public class PlayerControl : MonoBehaviour
         }//End If/Else
     }//End ShouldMoveLeft
 
+
+
     /// <summary>
     /// Player moves away from the camera at a given speed
     /// </summary>
@@ -364,6 +388,8 @@ public class PlayerControl : MonoBehaviour
             return false;
         }//End If/Else
     }//End ShouldMoveIn()
+
+
 
     /// <summary>
     /// Player moves toward the camera at a given speed
@@ -403,6 +429,8 @@ public class PlayerControl : MonoBehaviour
         }//End If/Else
     }//End ShouldMoveOut()
 
+
+
     /// <summary>
     /// Player is toggled into or out of crouch mode
     /// </summary>
@@ -419,6 +447,8 @@ public class PlayerControl : MonoBehaviour
             playerSpeed = 1.4f;
         }
     }//End ToggleCrouch()
+
+
 
     private void Shoot()
     {
@@ -437,6 +467,7 @@ public class PlayerControl : MonoBehaviour
         IJustHit = false;
     }//End Shoot()
 
+
     /// <summary>
     /// The player indicates that they would like to interact with an object. If there is an object, it checks what kind of object.
     /// </summary>
@@ -444,6 +475,7 @@ public class PlayerControl : MonoBehaviour
     {
         throw new System.NotImplementedException();
     }//End Interact()
+
 
     /// <summary>
     /// Method checks if the player is currently carrying something
@@ -460,6 +492,8 @@ public class PlayerControl : MonoBehaviour
         }
     }//End IsCarrying()
 
+
+
     internal void ToggleCarry()
     {
         if(carrying)
@@ -471,6 +505,8 @@ public class PlayerControl : MonoBehaviour
             carrying = true;
         }
     }//End ToggleCarry()
+
+
 
     /// <summary>
     /// Method checks if the player or drone is currently active
@@ -487,6 +523,8 @@ public class PlayerControl : MonoBehaviour
         }
     }//End IsPlayerActive()
 
+
+
     /// <summary>
     /// Player throws the object it is carrying, if it is not carrying an object nothing is thrown
     /// </summary>
@@ -494,6 +532,8 @@ public class PlayerControl : MonoBehaviour
     {
         throw new System.NotImplementedException();
     }//End Throw()
+
+
 
     /// <summary>
     /// The player becomes inactive, the drone becomes active, if the player is inactive it becomes active and the drone becomes inactive
@@ -512,6 +552,8 @@ public class PlayerControl : MonoBehaviour
         }
     }//End ToggleActive()
 
+
+
     /// <summary>
     /// allows the player to ascend or descend regardless of gravity as long as they are on a ladder.
     /// </summary>
@@ -520,20 +562,28 @@ public class PlayerControl : MonoBehaviour
         throw new System.NotImplementedException();
     }//End ClimbLadder()
 
+
+
     private void OnTriggerEnter(Collider other)
     {
 
     }//End OnTriggerEnter()
+
+
 
     internal void SetMoney(int m)
     {
         money = m;
     }
 
+
+
     internal int GetMoney()
     {
         return money;
     }
+
+
 
     internal void SetHealth(int h)
     {
@@ -544,35 +594,29 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
+
+
     internal int GetHealth()
     {
         return health;
     }
+
+
 
     internal char IAmFacing()
     {
         return facing;
     }
 
+
+
     internal int GetWeaponDamage()
     {
         return weaponDamage;
     }
 
-    internal bool GetEnemyHit()
-    {
-        return IJustHit;
-    }
 
-    internal void SetEnemyHit(int result)
-    {
-        if (result == 1)
-        {
-            IJustHit = false;
-        }
-        else
-        {
-            IJustHit = true;
-        }
-    }
+
+
+
 }
