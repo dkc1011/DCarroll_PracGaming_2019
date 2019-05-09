@@ -73,6 +73,7 @@ public class PlayerControl : MonoBehaviour
         rb = GetComponent<Rigidbody>();
 
         //Initializes various variables
+        health = 100;
         active = true;
         playerSpeed = 3.9f;
         facing = 'r';
@@ -93,11 +94,20 @@ public class PlayerControl : MonoBehaviour
 
     // Update is called once per frame
     void Update() {
-       
+        if (health <= 0)
+        {
+            this.gameObject.SetActive(false);
+        }
+
 
         //Checks if the player character is currently active
         if (IsPlayerActive())
         {
+            //ToggleCrouching trigger
+            if (Input.GetKeyDown("c"))
+            {
+                ToggleCrouch();
+            }
 
             //Checks every tick if the player has pressed a movement key
             CheckMovement();
@@ -182,11 +192,7 @@ public class PlayerControl : MonoBehaviour
             Airbourne = false;
         }
 
-        //ToggleCrouching trigger
-        if (Input.GetKeyDown("c"))
-        {
-            ToggleCrouch();
-        }
+
 
         //ToggleActive trigger -- When the player pressed D, the Drone becomes active
 
@@ -478,9 +484,13 @@ public class PlayerControl : MonoBehaviour
 
         if (Physics.Raycast(transform.position, fwd, out enemyHit, 10))
         {
+            EnemyController enemyHealth;
+
             if (enemyHit.collider.tag == "Enemy")
             {
                 print("Hit Enemy with Bullet");
+                enemyHealth = enemyHit.collider.GetComponent<EnemyController>();
+                enemyHealth.TakeDamage(weaponDamage);
             }
             else
             {

@@ -9,6 +9,7 @@ public class EnemyController : MonoBehaviour {
     float enemySpeed;
     private Vector3 startPosition;
     private Vector3 targetPosition;
+    private Vector3 fwd;
     private enum Status { Idle, Patrolling, Alerted, Engaging }
     private Status enemyStatus;
     private float waitTimer;
@@ -23,98 +24,178 @@ public class EnemyController : MonoBehaviour {
         enemyStatus = Status.Idle;
         startPosition = transform.position;
         waitTimer = 0;
-
+        enemySpeed = 2.5f;
         
     }
 	
 	// Update is called once per frame
 	void Update () {
-        switch(enemyStatus)
+        if(health <= 0)
+        {
+            this.gameObject.SetActive(false);
+        }
+
+
+        switch (enemyStatus)
         {
             case Status.Idle:
-                Vector3 fwd = transform.forward;
 
-                if (transform.position != startPosition)
-                {
-                    targetPosition = startPosition;
-                    enemyStatus = Status.Patrolling;
-                }
-                else
-                {
-                    waitTimer += Time.deltaTime;
+                waitTimer += Time.deltaTime;
 
-                    if (waitTimer >= 3 && waitTimer <= 6)
-                    {
+                if (waitTimer >= 3 && waitTimer <= 6)
+                {
                         FaceOut();
-                    }
-                    else if (waitTimer > 6 && waitTimer <= 9)
-                    {
+                        fwd = transform.forward;
+
+                        CheckPlayerSpotted();
+
+                        if (WasPlayerSpotted())
+                        {
+                            enemyStatus = Status.Patrolling;
+                        }
+                }
+                else if (waitTimer > 6 && waitTimer <= 9)
+                {
                         FaceRight();
+                        fwd = transform.forward;
+
+                        CheckPlayerSpotted();
+
+                    if (WasPlayerSpotted())
+                    {
+                        enemyStatus = Status.Patrolling;
                     }
+                }
                     else if (waitTimer > 9 && waitTimer <= 12)
                     {
                         FaceIn();
+                        fwd = transform.forward;
+
+                        CheckPlayerSpotted();
+
+                    if (WasPlayerSpotted())
+                    {
+                        enemyStatus = Status.Patrolling;
                     }
+                }
                     else if (waitTimer > 12)
                     {
                         waitTimer = 0;
                         FaceLeft();
-                    }                    
+                        fwd = transform.forward;
 
+                        CheckPlayerSpotted();
 
-                    if (Physics.Raycast(transform.position, fwd, out playerCheck, 15))
+                    if (WasPlayerSpotted())
                     {
-                        if (playerCheck.collider.tag == "Player")
-                        {
-                            Debug.Log("Player spotted");
-
-                            if (playerCheck.point.z < transform.position.z)
-                            {
-                                targetPosition = new Vector3(playerCheck.point.x, playerCheck.point.y, playerCheck.point.z + 2);
-                            }
-                            else if(playerCheck.point.z > transform.position.z)
-                            {
-                                targetPosition = new Vector3(playerCheck.point.x, playerCheck.point.y, playerCheck.point.z - 2);
-                            }
-                               
-
-                            enemyStatus = Status.Patrolling;
-
-                        }
-
+                        enemyStatus = Status.Patrolling;
                     }
-                }
+                }                    
+                    
 
                 break;
 
             case Status.Patrolling:
-                if(targetPosition.z <= transform.position.z)
+                if(targetPosition != transform.position)
                 {
-                    PatrolLeft();
+                    waitTimer += Time.deltaTime;
+
+                    if (targetPosition.z <= transform.position.z)
+                    {
+                        PatrolRight();
+
+                        if (waitTimer >= 3)
+                        {
+                            if(WasPlayerSpotted())
+                            {
+                                enemyStatus = Status.Engaging;
+                            }
+                            else
+                            {
+                                enemyStatus = Status.Idle;
+                            }
+
+                            waitTimer = 0;
+                        }
+                        
+                    }
+                    else if(targetPosition.z >= transform.position.z)
+                    {
+                        PatrolLeft();
+
+                        if (waitTimer >= 3)
+                        {
+                            if (WasPlayerSpotted())
+                            {
+                                enemyStatus = Status.Engaging;
+                            }
+                            else
+                            {
+                                enemyStatus = Status.Idle;
+                            }
+
+                            waitTimer = 0;
+                        }
+                    }
+                    else if(targetPosition.x >= transform.position.x)
+                    {
+                        PatrolUp();
+
+                        if (waitTimer >= 3)
+                        {
+                            if (WasPlayerSpotted())
+                            {
+                                enemyStatus = Status.Engaging;
+                            }
+                            else
+                            {
+                                enemyStatus = Status.Idle;
+                            }
+                        }
+                    }
+                    else if(targetPosition.x <= transform.position.x)
+                    {
+                        PatrolDown();
+
+                        if (waitTimer >= 3)
+                        {
+                            if (WasPlayerSpotted())
+                            {
+                                enemyStatus = Status.Engaging;
+                            }
+                            else
+                            {
+                                enemyStatus = Status.Idle;
+                            }
+                        }
+                    }
+
                 }
-                else if(targetPosition.z >= transform.position.z)
+                else
                 {
-                    PatrolRight();
+                    enemyStatus = Status.Idle;
                 }
-                else if(targetPosition.z == transform.position.z && targetPosition.x <= transform.position.x)
-                {
-                    PatrolDown();
-                }
-                else if (targetPosition.z == transform.position.z && targetPosition.x >= transform.position.x)
-                {
-                    PatrolUp();
-                }
-                //else
-                //{
-                //    enemyStatus = Status.Idle;
-                //}
 
                 break;
 
-            case Status.Alerted:
-
-
             case Status.Engaging:
+                if (WasPlayerSpotted())
+                {
+                    Debug.Log("Enemy : Engaging");
+
+                    waitTimer += Time.deltaTime;
+
+                    if(waitTimer >= 1)
+                    {
+                        myPlayer.SetHealth(myPlayer.GetHealth() - 15);
+                        waitTimer = 0;
+                    }
+                }
+                else
+                {
+                    enemyStatus = Status.Patrolling;
+                }
+                break;
 
             default:
                 enemyStatus = Status.Patrolling;
@@ -126,10 +207,6 @@ public class EnemyController : MonoBehaviour {
         transform.position += enemySpeed * transform.forward * Time.deltaTime;
     }//End Move()
 
-    private void TakeDamage(int wepDamage)
-    {
-
-    }
 
     private void Die()
     {
@@ -139,28 +216,28 @@ public class EnemyController : MonoBehaviour {
     private void PatrolLeft()
     {
         FaceLeft();
-
+        Debug.Log("Enemy : Patrolling left");
         Move(enemySpeed);
     }
 
     private void PatrolRight()
     {
         FaceRight();
-
+        Debug.Log("Enemy : Patrolling right");
         Move(enemySpeed);
     }
 
     private void PatrolUp()
     {
         FaceIn();
-
+        Debug.Log("Enemy : Patrolling In");
         Move(enemySpeed);
     }
 
     private void PatrolDown()
     {
         FaceOut();
-
+        Debug.Log("Enemy : Patrolling Out");
         Move(enemySpeed);
     }
 
@@ -268,6 +345,47 @@ public class EnemyController : MonoBehaviour {
         }
     }
 
+    private void CheckPlayerSpotted()
+    {
+        Debug.DrawRay(transform.position, fwd, Color.white, 3);
+        if (Physics.Raycast(transform.position, fwd, out playerCheck, 15))
+        {
+            if (playerCheck.collider.tag == "Player")
+            {
+                Debug.Log("Enemy : Player spotted");
 
+                if (playerCheck.point.z < transform.position.z)
+                {
+                    targetPosition = new Vector3(myPlayer.transform.position.x, myPlayer.transform.position.y, myPlayer.transform.position.z);
+                }
+                else if (playerCheck.point.z > transform.position.z)
+                {
+                    targetPosition = new Vector3(myPlayer.transform.position.x, myPlayer.transform.position.y, myPlayer.transform.position.z);
+                }
+
+            }
+
+        }
+    }
+
+    private bool WasPlayerSpotted()
+    {
+        if (Physics.Raycast(transform.position, fwd, out playerCheck, 15))
+        {
+            if (playerCheck.collider.tag == "Player")
+            {
+                return true;
+
+            }
+
+        }
+
+        return false;
+    }
+
+    public void TakeDamage(int Damage)
+    {
+        health -= 25;
+    }
 
 }

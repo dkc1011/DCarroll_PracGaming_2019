@@ -1,11 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PickUpItemControl : MonoBehaviour {
     float turningSpeed = 50.0f;
     internal enum ItemType { Health, Money }
     PlayerControl myPlayer;
+
 
     //Declares what type of item this gameObject represents.
     internal ItemType thisItemIs;
@@ -32,6 +34,8 @@ public class PickUpItemControl : MonoBehaviour {
     void Update()
     {
         RotateLeft();
+
+
     }
 
     private void RotateLeft()
